@@ -1,31 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 import '../App.css';
+import { type } from 'os';
 
-const tabsData = [
-  {
-    id: 'correct-answer',
-    label: 'Correct Answer',
-    content: 'This is the Correct Answer tab content.',
-  },
-  {
-    id: 'alternate1',
-    label: 'Alternate 1',
-    content: 'This is the Alternale 1 tab content.',
-  },
-  {
-    id: 'alternate2',
-    label: 'Alternale 2',
-    content: 'This is the Alternale 2 tab content.',
-  },
-];
-
-interface Tab {
-  id: string;
-  label: string;
-  content: string;
+type Tab = {
+  id: string,
+  label: string,
+  content: any
 }
 
 const Classification: React.FC = () => {
+  const [alternateCount, setAlternateCount] = useState(0);
+  const [tabs, setTabs] = useState<Tab[]>([]);
+
   useEffect(() => {
     // Simulate a click on the first tab button to set it as active by default
     const firstTabButton = document.querySelector('.tab button.tablinks');
@@ -35,6 +22,23 @@ const Classification: React.FC = () => {
       openTab(tabName!);
     }
   }, []);
+
+  const handleButtonClick = () => {
+    const newAlternateCount = alternateCount + 1;
+    var newTab: Tab = {
+      id: `alternate${newAlternateCount}`,
+      label: `Alternate ${newAlternateCount}`,
+      content: `Alternate ${newAlternateCount}`
+    }
+    setTabs([...tabs, newTab]);
+    setAlternateCount(newAlternateCount);
+  };
+
+  const handleTabClose = (index: number) => {
+    const updatedTabs = tabs.filter((_, i) => i !== index);
+    setTabs(updatedTabs);
+    setAlternateCount(alternateCount - 1); // Update the alternate count
+  };
 
   const openTab = (tabName: string) => {
     const tabcontent = document.getElementsByClassName('tabcontent') as HTMLCollectionOf<HTMLElement>;
@@ -73,8 +77,8 @@ const Classification: React.FC = () => {
             <input type="text" id="row-count" style={{ width: '150px' }} />
           </div>
 
-          <div className="grid-item"><button className="red-button">+ Add</button></div>
-          <div className="grid-item"><button className="red-button">+ Add</button></div>
+          <div className="grid-item"><button className="red-button"><FaPlus /> Add</button></div>
+          <div className="grid-item"><button className="red-button"><FaPlus /> Add</button></div>
         </div>
         
          <textarea
@@ -88,6 +92,7 @@ const Classification: React.FC = () => {
       <section className='possible-responses-section'>
         <div className="section-heading">Possible Responses</div>
         {/* Add content for Possible Responses section if needed */}
+      
       </section>
       
       
@@ -95,20 +100,47 @@ const Classification: React.FC = () => {
       {/* Section: Set Correct Answer(s) */}
       <section className='set-correct-answers-section'>
         <div className="section-heading">Set Correct Answer(s)</div>
-        <div className="tab">
-          {tabsData.map((tab) => (
-            <button
-              key={tab.id}
-              className={`tablinks`}
-              data-tabname={tab.id}
-              onClick={() => openTab(tab.id)}
-            >
-              {tab.label}
+      
+        <div className="grid-container">
+          <div className="grid-item">
+            <div className="tabs">
+              <div className="tab">
+                  <button
+                    key={'correct-answer'}
+                    className={`tablinks`}
+                    data-tabname={`Correct Answer`}
+                    onClick={() => openTab('correct-answer')}
+                  >
+                    {'Correct Answer'}
+                  </button>
+              </div>
+
+              <div className="tab">
+                {tabs.map((tab, index) => (
+                  <button
+                    key={tab.id}
+                    className={`tablinks`}
+                    data-tabname={`Alternate ${index + 1}`}
+                    onClick={() => openTab(tab.id)}
+                  >
+                    {tab.label}
+                    <span onClick={() => handleTabClose(index)} className="close-icon">
+                    <FaTimes />
+                  </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid-item">
+            <button id="add-alternate" className="red-button" onClick={handleButtonClick}>
+              <FaPlus /> Alternative Answer
             </button>
-          ))}
+          </div>
         </div>
 
-        {tabsData.map((tab) => (
+        {tabs.map((tab) => (
           <div key={tab.id} id={tab.id} className="tabcontent">
             <p>{tab.content}</p>
           </div>
