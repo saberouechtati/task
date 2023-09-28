@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import ClassificationQuestionCreation from './components/ClassificationQuestionCreation';
+import ClassificationInterface from './components/ClassificationInterface';
 
 const App = () => {
   return (
     <div>
-      <ClassificationQuestionCreation />
+      <ClassificationInterface />
     </div>
   );
 };
